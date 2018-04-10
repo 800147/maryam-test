@@ -1,0 +1,20 @@
+{
+  "name": "maryam-test",
+  "version": "1.0.0",
+  "description": "Оценка показателей эффективности внутреннего взаимодействия распределенной проектной команды на основе результатов интерактивного онлайн тестирования",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/800147/maryam-test.git"
+  },
+  "author": "800147@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/800147/maryam-test/issues"
+  },
+  "homepage": "https://github.com/800147/maryam-test#readme"
+}
