@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/800147/maryam-test/issues"
   },
-  "homepage": "https://github.com/800147/maryam-test#readme"
+  "homepage": "https://github.com/800147/maryam-test#readme",
+  "dependencies": {
+    "ws": "^5.1.1"
+  }
 }

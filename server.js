@@ -3,6 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const { URL } = require("url");
 
+const WebSocket = require("ws");
+
 const cache = {};
 
 http.createServer().on("request", (request, response) => {
@@ -17,7 +19,7 @@ http.createServer().on("request", (request, response) => {
     ));
     console.log(response.statusCode);
   } else {
-    const filePath = "./static" + pathName;
+    const filePath = "./static" + (pathName != "/"? pathName: "/index.html");
     console.log(filePath);
     serveStatic(response, cache, filePath);
   }
@@ -68,3 +70,15 @@ function serveStatic(response, cache, absPath) {
     });
   }
 }
+
+const webSocketServer = new WebSocket.Server({ port: 3001 });
+webSocketServer.on("connection", ws => {
+  ws.on("message", message => {
+    webSocketServer.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send("someone said: " + message);
+      }
+    });
+  });
+  ws.send("hi");
+});
