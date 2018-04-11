@@ -24,7 +24,7 @@ ws.onmessage = message => {
   body.appendChild(__("div", {}, message.data));
 };
 ws.onerror = error => {
-  alert("Ошибка: " + error.message);
+  body.appendChild(__("div", { "style": "color: red;" }, "Ошибка: " + error.message));
 };
 const sendMessage = message => ws.send(message);
 
