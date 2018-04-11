@@ -25,26 +25,18 @@ http.createServer().on("request", (request, response) => {
   }
 }).listen(3000, () => console.log("server working: http://localhost:3000"));
 
-function send404(response) {
-  response.writeHead(404, { "Content-Type": "text/plain" });
-  response.write("Error 404: resource not found.");
-  response.end();
+function sendError(response, errorCode = 500) {
+  response.writeHead(errorCode, { "Content-Type": "text/plain" });
+  response.end("Error " + errorCode);
 }
 
 function sendFile(response, filePath, fileContents) {
   let type;
   switch (path.extname(filePath)) {
-    case ".html":
-      type = "text/html";
-      break;
-    case ".js":
-      type = "text/javascript";
-      break;
-    case ".css":
-      type = "text/css";
-      break;
-    default:
-      type = "text/plain";
+    case ".html": type = "text/html";       break;
+    case ".js":   type = "text/javascript"; break;
+    case ".css":  type = "text/css";        break;
+    default:      type = "text/plain";
   }
   response.writeHead(200, { "content-type": type });
   response.end(fileContents);
@@ -58,14 +50,14 @@ function serveStatic(response, cache, absPath) {
       if (exists) {
         fs.readFile(absPath, (err, data) => {
           if (err) {
-            send404(response);
+            sendError(response, 404);
           } else {
             cache[absPath] = data;
             sendFile(response, absPath, data);
           }
         });
       } else {
-        send404(response);
+        sendError(response, 404);
       }
     });
   }
@@ -77,6 +69,7 @@ webSocketServer.on("connection", ws => {
   ws.on("message", message => {
     console.log("ws message: " + message);
     webSocketServer.clients.forEach(client => {
+      //console.log(client);
       if (client.readyState === WebSocket.OPEN) {
         client.send("someone said: " + message);
       }
