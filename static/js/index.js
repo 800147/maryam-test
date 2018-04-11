@@ -12,7 +12,7 @@ const getUrlParams = () => {
 };
 
 
-const ws = new WebSocket("ws://localhost:3001");
+const ws = new WebSocket("ws://" + window.location.hostname + ":3001");
 ws.onopen = () => {
   setStatus("open");
   sendMessage("hello");

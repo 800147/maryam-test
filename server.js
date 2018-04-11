@@ -73,7 +73,9 @@ function serveStatic(response, cache, absPath) {
 
 const webSocketServer = new WebSocket.Server({ port: 3001 });
 webSocketServer.on("connection", ws => {
+  console.log("ws connection");
   ws.on("message", message => {
+    console.log("ws message: " + message);
     webSocketServer.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         client.send("someone said: " + message);
