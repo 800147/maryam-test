@@ -6,7 +6,10 @@ const { URL } = require("url");
 const cache = {};
 
 const startHttp = port => {
-  http.createServer().on("request", handler).listen(port, () => console.log("server working: http://localhost:" + port));
+  server = http.createServer();
+  server.on("request", handler);
+  server.listen(port, () => console.log("server working: http://localhost:" + port));
+  return server;
 };
 
 const handler = (request, response) => {

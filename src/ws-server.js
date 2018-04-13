@@ -1,7 +1,7 @@
 const WebSocket = require("ws");
 
-const startWs = port => {
-  const webSocketServer = new WebSocket.Server({ port: port });
+const startWs = params => {
+  const webSocketServer = new WebSocket.Server(params);
   webSocketServer.on("connection", ws => {
     console.log("ws connection");
     ws.on("message", message => {
@@ -15,6 +15,7 @@ const startWs = port => {
     });
     ws.send("hi");
   });
+  return webSocketServer;
 };
 
 module.exports = startWs;
