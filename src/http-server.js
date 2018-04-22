@@ -7,7 +7,7 @@ const store = require("./store");
 const startHttp = port => {
   server = http.createServer();
   server.on("request", onRequest);
-  server.listen(port, () => console.log("server working: http://localhost:" + port));
+  server.listen(port, () => console.log("server working on " + port));
   return server;
 };
 
