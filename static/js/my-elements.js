@@ -59,15 +59,8 @@ const __numberInput = ({
   min = null,
   max = null
 }) => {
-  let input;
-  const change = n => {
-    let value = Number(input.value) + n;
-    if (min != null && value < min) value = min;
-    if (max != null && value > max) value = max;
-    if (integer) value = Math.round(value);
-    input.value = value;
-  };
-  return used(
+  let __input;
+  const block = used(
     __("div", { "class": "number-input" }, 
       __("div", { "class": "number-input__pre-text" }, String(preText)), 
       used(__lineInput({ "value": value, "form": form, "name": name }),
@@ -79,7 +72,7 @@ const __numberInput = ({
           else el.step = "any";
         },
         el => el.classList.add("number-input__input"),
-        el => input = el,
+        el => __input = el,
         el => el.addEventListener("change", e => change(0)),
       ),
       __("div", { "class": "number-input__post-text" }, String(postText)),
@@ -99,26 +92,53 @@ const __numberInput = ({
     el => { if (preText != null) el.classList.add("number-input_with-pretext"); },
     el => { if (postText != null) el.classList.add("number-input_with-posttext"); }
   );
+  block.__input = __input;
+
+  const change = n => {
+    let value = Number(block.__input.value) + n;
+    if (min != null && value < min) value = min;
+    if (max != null && value > max) value = max;
+    if (integer) value = Math.round(value);
+    block.__input.value = value;
+  };
+
+  return block;
 };
 
 
 const __ruleRow = (n, find = "", replace = "", registerSensitive = false, multiline = false, firstOnly = false, loop = false) =>
-__("div", { "class": "row" },
-  __("div", { "class": "row__flex justify-content_flex-end" },
-    used(__lineInput({ "name": "f" + n, "placeholder": "write find RegExp here", "form": "form-0", "value": find }),
-      el => el.classList.add("flex-grow_1")
-    ),
-    used(__lineInput({ "name": "r" + n, "placeholder": "write replace RegExp here", "form": "form-0", "value": replace }),
-      el => el.classList.add("flex-grow_1")
-    ),
-    __("div", { "class": "row__subflex justify-content_flex-end" },
-      __checkboxButton({ "name": "s" + n, "title": "register-sensitive", "form": "form-0", "short": true, "checked": registerSensitive }, "aA"),
-      __checkboxButton({ "name": "m" + n, "title": "multilene search", "form": "form-0", "short": true, "checked": multiline }, "^$"),
-      __checkboxButton({ "name": "o" + n, "title": "first only", "form": "form-0", "short": true, "checked": firstOnly }, "=1"),
-      __checkboxButton({ "name": "l" + n, "title": "looped", "form": "form-0", "short": true, "checked": loop }, "↻"),
-      __submit({ "short": true, "value": "˄", "title": "move up", "form": "form-0", "name": "up-" + n }),
-      __submit({ "short": true, "value": "˅", "title": "move down", "form": "form-0", "name": "down-" + n }),
-      __submit({ "short": true, "value": "╳", "title": "remove rule", "form": "form-0", "name": "remove-" + n })
-    )
+__row({},
+  used(__lineInput({ "name": "f" + n, "placeholder": "write find RegExp here", "form": "form-0", "value": find }),
+    el => el.classList.add("flex-grow_1")
+  ),
+  used(__lineInput({ "name": "r" + n, "placeholder": "write replace RegExp here", "form": "form-0", "value": replace }),
+    el => el.classList.add("flex-grow_1")
+  ),
+  __("div", { "class": "row__subflex justify-content_flex-end" },
+    __checkboxButton({ "name": "s" + n, "title": "register-sensitive", "form": "form-0", "short": true, "checked": registerSensitive }, "aA"),
+    __checkboxButton({ "name": "m" + n, "title": "multilene search", "form": "form-0", "short": true, "checked": multiline }, "^$"),
+    __checkboxButton({ "name": "o" + n, "title": "first only", "form": "form-0", "short": true, "checked": firstOnly }, "=1"),
+    __checkboxButton({ "name": "l" + n, "title": "looped", "form": "form-0", "short": true, "checked": loop }, "↻"),
+    __submit({ "short": true, "value": "˄", "title": "move up", "form": "form-0", "name": "up-" + n }),
+    __submit({ "short": true, "value": "˅", "title": "move down", "form": "form-0", "name": "down-" + n }),
+    __submit({ "short": true, "value": "╳", "title": "remove rule", "form": "form-0", "name": "remove-" + n })
   )
 );
+
+const __row = ({ panel = false }, ...content) => {
+  let container;
+  return used(
+    __("div", { "class": "row" },
+      used(
+        __("div", { "class": "row__flex justify-content_flex-end" },
+          ...content
+        ),
+        el => container = el
+      )
+    ),
+    el => { if (panel) el.classList.add("row_panel"); },
+    el => el.__container = container
+  )
+};
+
+const __subRow = ({ }, ...content) => __("div", { "class": "row__subflex" }, ...content);

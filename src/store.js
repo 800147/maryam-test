@@ -1,6 +1,3 @@
-const store = {
-  httpRequests: 0,
-  socketMessages: 0
-};
+const store = { };
 
 module.exports = store;

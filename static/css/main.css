@@ -255,7 +255,7 @@ body {
   display: flex;
   flex-direction: row;
   height: var(--input-height);
-  width: 100pt;
+  /*width: 100pt;*/
 }
 .number-input__pre-text {
   display: none;
@@ -278,9 +278,10 @@ body {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
-.number-input__input {
+.number-input > .number-input__input {
   height: var(--input-height);
   min-width: 10pt;
+  width: 30pt;
   border-right: none;
   flex-grow: 1;
   border-top-right-radius: 0;

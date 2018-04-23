@@ -15,7 +15,6 @@ const startWs = params => {
 };
 
 const onMessage = message => {
-  store.socketMessages++;
   console.log("ws message: " + message);
   webSocketServer.clients.forEach(client => {
     //console.log(client);
