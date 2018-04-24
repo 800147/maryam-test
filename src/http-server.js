@@ -2,8 +2,9 @@ const http = require("http");
 const { URL } = require("url");
 const querystring = require('querystring');
 
-const serveStatic = require("./static-server");
-const store = require("./store");
+const { serveStatic } = require("./static-server");
+const { api } = require("./api");
+const { store } = require("./store");
 
 const startHttp = port => {
   server = http.createServer();
@@ -17,27 +18,15 @@ const onRequest = (request, response) => {
   const pathName = new URL("http://" + request.headers.host + request.url).pathname;
   if (request.url.startsWith("/api/")) {
     if (request.method == 'POST') {
-      var body = '';
+      let body = '';
+      request.on('data', data => body += data);
+      request.on('end', () => {
+        const postObj = querystring.parse(body);
+        api(request.url.substring("/api/".length), postObj, json => sendJson(response, json));
+      });
+    } else {
+      sendJson(response, { error: "use POST method please" });
     }
-
-    request.on('data', function (data) {
-      body += data;
-    });
-
-    request.on('end', function () {
-      var post = querystring.parse(body);
-      console.log(post);
-    });
-    response.writeHead(200, { "Content-Type": "text/json" });
-    response.end(JSON.stringify(
-      {
-        message: "hello, world!",
-        store: store
-      }
-    ));
-    //console.log(request);
-    console.log(request.data);
-    console.log(response.statusCode);
   } else {
     const filePath = "./static" + (pathName != "/"? pathName: "/index.html");
     console.log(filePath);
@@ -45,4 +34,12 @@ const onRequest = (request, response) => {
   }
 };
 
-module.exports = startHttp;
+const sendJson = (response, obj) => {
+  response.writeHead(200, { "Content-Type": "text/json" });
+  console.log(JSON.stringify(obj));
+  response.end(JSON.stringify(obj));
+};
+
+module.exports = {
+  startHttp
+};

@@ -1,6 +1,6 @@
 const WebSocket = require("ws");
 
-const store = require("./store");
+const { store } = require("./store");
 
 let webSocketServer;
 
@@ -17,16 +17,15 @@ const startWs = params => {
 const onMessage = message => {
   console.log("ws message: " + message);
   webSocketServer.clients.forEach(client => {
-    //console.log(client);
     if (client.readyState === WebSocket.OPEN) {
-      client.send(
-        JSON.stringify({
-          message: "someone said: " + message,
-          store: store
-        })
-      );
+      client.send(JSON.stringify({
+        message: "someone said: " + message,
+        store: store
+      }));
     }
   });
 };
 
-module.exports = startWs;
+module.exports = {
+  startWs
+};

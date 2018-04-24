@@ -41,4 +41,6 @@ const sendError = (response, errorCode = 500) => {
   response.end("Error " + errorCode);
 };
 
-module.exports = serveStatic;
+module.exports = {
+  serveStatic
+};

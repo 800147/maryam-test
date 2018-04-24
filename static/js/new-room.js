@@ -49,16 +49,17 @@ const body = __("body", null,
       __subRow({},
         used(__button({}, "Сгенерировать ссылки"),
           el => generateButton = el
-        ),
-        __submit({ form: "form-0", value: "S", short: true })
+        )
       ),
       el => el.classList.add("flex-grow_1")
     ),
-    used(__numberInput({ preText: "+", value: 1, integer: true, min: 1 }),
-      el => addUserCountInput = el
-    ),
-    used(__button({ short: true }, "+"),
-      el => addUserButton = el
+    __subRow({},
+      used(__numberInput({ preText: "+", value: 1, integer: true, min: 1 }),
+        el => addUserCountInput = el
+      ),
+      used(__button({ short: true }, "+"),
+        el => addUserButton = el
+      )
     )
   )
 );
@@ -89,16 +90,15 @@ const removeUser = n => {
 };
 
 const generate = () =>
-fetch("/api/", {
+fetch("/api/newRoom", {
   method: "post",
   headers: {
     "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-   },
+  },
   body: formToUrlParams(form)
-  //body: new FormData(form)
 })
 .then(rs => rs.json())
-.then(json => alert(json.message));
+.then(json => alert(JSON.stringify(json)));
 
 const formToUrlParams = form => {
   const params = [];
@@ -106,6 +106,4 @@ const formToUrlParams = form => {
     params.push(key + "=" + encodeURIComponent(value));
   });
   return params.join("&");
-  //const formData = new FormData(form);
-  //return formData.keys().map(key => key + "=" + encodeURIComponent(formData.get(key))).join("&");
 };
