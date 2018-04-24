@@ -98,7 +98,8 @@ fetch("/api/newRoom", {
   body: formToUrlParams(form)
 })
 .then(rs => rs.json())
-.then(json => alert(JSON.stringify(json)));
+//.then(json => alert(JSON.stringify(json)));
+.then(json => console.log(json));
 
 const formToUrlParams = form => {
   const params = [];

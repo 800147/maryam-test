@@ -1,3 +1,6 @@
-const store = { };
+const store = {
+  rooms: {},
+  users: {}
+};
 
 module.exports = { store };

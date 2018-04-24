@@ -1,4 +1,5 @@
 const { store } = require("./store");
+const { uuidv4 } = require("./lib/uuidv4.js");
 
 const api = (path, data, sendJson) => {
   console.log("API \"" + path + "\" " + JSON.stringify(data));
@@ -12,8 +13,38 @@ const api = (path, data, sendJson) => {
 };
 
 const newRoom = (data, sendJson) => {
-  sendJson(data);
-}
+  const roomId = uuidv4();
+  const room = {
+    logs: [],
+    users: {}
+  };
+  store.rooms[roomId] = room;
+  let userIndex = 0;
+
+  const response = [];
+
+  while (data["user-" + userIndex] != null) {
+    const userId = uuidv4();
+    room.users[userId] = {
+      initNumber: userIndex,
+      initName: data["user-" + userIndex],
+      name: ""
+    };
+    store.users[userId] = {
+      key: uuidv4(),
+      room: roomId
+    };
+    response.push({
+      initNumber: userIndex,
+      initName: room.users[userId].initName,
+      id: userId,
+      key: store.users[userId].key
+    });
+    
+    userIndex++;
+  }
+  sendJson(response);
+};
 
 module.exports = {
   api
