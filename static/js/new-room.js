@@ -23,11 +23,11 @@ const __userRow = (n) => {
   block.__label = b__label;
 
   block.__setN = n => {
-    block.__nameInput.placeholder = "Пользователь " + n;
+    block.__nameInput.placeholder = "пользователь " + n;
     block.__nameInput.name = "user-" + n;
     block.__nameInput.id = "user-" + n;
     block.__label.replaceChild(
-      document.createTextNode("Имя " + n + ": "),
+      document.createTextNode("имя " + n + ": "),
       block.__label.firstChild
     );
     block.__label.htmlFor = block.__nameInput.id;
@@ -59,7 +59,7 @@ const body = __("body", null,
   __row({ panel: true },
     used(
       __subRow({},
-        used(__button({}, "Сгенерировать ссылки"),
+        used(__button({}, "сгенерировать ссылки"),
           el => generateButton = el
         )
       ),
@@ -125,10 +125,10 @@ const __codeRow = user => {
       el => el.classList.add("visually-hidden"),
       el => label = el
     ),
-    used(__button({}, "Скопировать ссылку"),
+    used(__button({}, "копировать ссылку"),
       el => el.addEventListener("click", e => copyToClipboard(label))
     ),
-    used(__button({}, "Отправить по email"),
+    used(__button({}, "отправить по email"),
       el => el.addEventListener("click", e =>
         window.open("mailto:?subject=Ссылка на тестирование&body=" + encodeURIComponent(link))
       )
