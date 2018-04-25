@@ -3,8 +3,12 @@
 const __userRow = (n) => {
   let __nameInput;
   let __xButton;
+  let b__label;
 
   const block = __row({ },
+    used(__label({ minWidth: "85pt" }, ""),
+      el => b__label = el
+    ),
     used(__lineInput({ form: "form-0" }),
       el => el.classList.add("flex-grow_1"),
       el => __nameInput = el
@@ -16,9 +20,17 @@ const __userRow = (n) => {
 
   block.__nameInput = __nameInput;
   block.__xButton = __xButton;
+  block.__label = b__label;
+
   block.__setN = n => {
     block.__nameInput.placeholder = "Пользователь " + n;
     block.__nameInput.name = "user-" + n;
+    block.__nameInput.id = "user-" + n;
+    block.__label.replaceChild(
+      document.createTextNode("Имя " + n + ": "),
+      block.__label.firstChild
+    );
+    block.__label.htmlFor = block.__nameInput.id;
     block.__n = n;
   }
 
@@ -98,8 +110,42 @@ fetch("/api/newRoom", {
   body: formToUrlParams(form)
 })
 .then(rs => rs.json())
-//.then(json => alert(JSON.stringify(json)));
-.then(json => console.log(json));
+.then(showCodes);
+
+const __codeRow = user => {
+  const link = window.location.href.substring(0,
+    window.location.href.length - "new-room.html".length
+  ) + "game.html?id=" + user.id + "&key=" + user.key;
+  let label;
+  return __row({},
+    used(__label({ textAlign: "left" }, user.initName),
+      el => el.classList.add("flex-grow_1")
+    ),
+    used(__label({ textAlign: "left" }, link),
+      el => el.classList.add("visually-hidden"),
+      el => label = el
+    ),
+    used(__button({}, "Скопировать ссылку"),
+      el => el.addEventListener("click", e => copyToClipboard(label))
+    ),
+    used(__button({}, "Отправить по email"),
+      el => el.addEventListener("click", e =>
+        window.open("mailto:?subject=Ссылка на тестирование&body=" + encodeURIComponent(link))
+      )
+    )
+  );
+};
+
+const showCodes = json => {
+  document.documentElement.replaceChild(
+    __("body", {},
+      used(__("div"),
+        el => json.forEach(user => el.appendChild(__codeRow(user)))
+      )
+    ), 
+    document.body
+  );
+};
 
 const formToUrlParams = form => {
   const params = [];
@@ -107,4 +153,10 @@ const formToUrlParams = form => {
     params.push(key + "=" + encodeURIComponent(value));
   });
   return params.join("&");
+};
+
+const copyToClipboard = el => {
+  document.getSelection().selectAllChildren(el);
+  document.execCommand("Copy");
+  document.getSelection().empty();
 };

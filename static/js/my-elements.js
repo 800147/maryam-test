@@ -15,6 +15,16 @@ __("div", { "class": "checkbox-button" + (short? " checkbox-button_short": "") }
   )
 );
 
+const __label = ({ minWidth = null, textAlign = null }, ...content) => used(
+  __("label", {
+      class: "label"
+    },
+    ...content
+  ),
+  el => { if (minWidth != null) { el.style.minWidth = minWidth; } },
+  el => { if (textAlign != null) { el.style.textAlign = textAlign; } }
+);
+
 const __lineInput = ({
   name = "",
   form = "",

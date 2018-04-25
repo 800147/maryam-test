@@ -41,6 +41,21 @@ body {
   border: 0;
 }
 
+.label {
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  color: var(--color);
+
+  display: inline-block;
+  box-sizing: border-box;
+  height: var(--input-height);
+  padding: var(--padding-v) var(--padding-h);
+  border: var(--border-width) solid transparent;
+  
+  text-align: right;
+}
+
 .checkbox-button {
   display: inline-block;
 }
@@ -374,4 +389,12 @@ body {
 
 .top-menu__count {
   width: 70pt;
+}
+
+.visually-hidden {
+  position: absolute;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
 }
