@@ -1,18 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-
-    <title>The Game</title>
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
-
-    <script src="js/lib/url-params.js"></script>
-    <script src="js/lib/elements.js"></script>
-    <script src="js/lib/click-and-hold.js"></script>
-    <script src="js/my-elements.js"></script>
-    <script src="js/game.js"></script>
+    <meta charset="utf-8"/>
+    <title>Maryam-test</title>
+    <style>
+      html, body { height: 100%; overflow: hidden; }
+      body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        background-color: #AAAAAA;
+      }
+      #container {
+        width: 100vw;
+        max-width: 800px;
+        height: calc(100vw / 800 * 500);
+        max-height: 500px;
+        align-self: center;
+      }
+      #flashContent {
+        width: 100%;
+        height: 100%;
+      }
+      #disconnected {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        background-color: #FFFFFF;
+        display: none;
+      }
+    </style>
+    <script type="text/javascript" src="js/lib/url-params.js"></script>
+    <script type="text/javascript" src="js/lib/ASBridge.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
   </head>
-  <body></body>
+  <body>
+    <div id="container">
+      <div id="flashContent">
+        <object id="theGame" name="theGame" type="application/x-shockwave-flash" data="Maryam-test.swf" width="100%" height="100%">
+          <param name="movie" value="Maryam-test.swf" />
+          <!--<param name="FlashVars" value="" />-->
+          <param name="quality" value="high" />
+          <param name="bgcolor" value="#FFFFFF" />
+          <param name="play" value="true" />
+          <param name="loop" value="true" />
+          <param name="wmode" value="direct" />
+          <param name="scale" value="showall" />
+          <param name="menu" value="true" />
+          <param name="devicefont" value="false" />
+          <param name="salign" value="" />
+          <param name="allowScriptAccess" value="sameDomain" />
+          <param name="allowFullScreen" value="true" />
+          <a href="http://www.adobe.com/go/getflash">
+            <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+          </a>
+        </object>
+      </div>
+      <div id="disconnected">
+        <br />
+        <br />
+        <h3>disconnected</h3>
+        <a href="">reload</a>
+      </div>
+    </div>
+  </body>
 </html>

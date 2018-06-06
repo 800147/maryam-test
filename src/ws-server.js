@@ -6,26 +6,57 @@ let webSocketServer;
 
 const startWs = params => {
   webSocketServer = new WebSocket.Server(params);
-  webSocketServer.on("connection", ws => {
+  webSocketServer.on("connection", client => {
     console.log("ws connection");
-    ws.on("message", onMessage);
-    ws.send("hi");
+    client.on("message", message => onMessage(message, client));
+    client.send("hi client");
   });
   return webSocketServer;
 };
 
-const onMessage = message => {
-  console.log("ws message: " + message);
-  webSocketServer.clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({
-        message: "someone said: " + message,
-        store: store
-      }));
+const onMessage = (message, client) => {
+  message = JSON.parse(message);
+  console.log("ws message: " + JSON.stringify(message));
+  console.log("id: " + message.id);
+  console.log("key: " + message.key);
+  if (store.users[message.id] == null || store.users[message.id].key !== message.key) {
+    console.log("Authentication failure! id: " + message.id + "key: " + message.key);
+    return false;
+  }
+  client.id = message.id;
+  client.room = store.users[client.id].room;
+  store.users[client.id].wsClient = client;
+  store.rooms[client.room].users[client.id].connected = true;
+  //store.rooms[client.room].users[client.id].wsClient = client;
+  notifyRoom(client.room);
+};
+
+const notifyRoom = room => {
+  console.log("notofy room: " + room);
+  if (store.rooms[room] == null) {
+    console.log("room is undefined");
+    return null;
+  }
+  const state = {
+    users: store.rooms[room].users,
+    state: store.rooms[room].state
+  };
+  for (userId in store.rooms[room].users) {
+    const user = store.users[userId];
+    //console.log(user);
+    if (user.wsClient == null) {
+      console.log("no wsClient");
+      continue;
     }
-  });
+    if (user.wsClient.readyState !== WebSocket.OPEN) {
+      console.log("user not ready");
+      continue;
+    }
+    user.wsClient.send(JSON.stringify(state));
+  }
 };
 
 module.exports = {
-  startWs
+  startWs,
+  notifyRoom
 };

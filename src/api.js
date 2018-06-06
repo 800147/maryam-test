@@ -1,11 +1,18 @@
 const { store } = require("./store");
 const { uuidv4 } = require("./lib/uuidv4.js");
+const { notifyRoom } = require("./ws-server");
 
 const api = (path, data, sendJson) => {
   console.log("API \"" + path + "\" " + JSON.stringify(data));
   switch (path) {
     case "newRoom":
       newRoom(data, sendJson);
+      break;
+    case "checkout":
+      checkout(data, sendJson);
+      break;
+    case "ready":
+      ready(data, sendJson);
       break;
     default:
       sendJson({ error: 404 });
@@ -27,8 +34,7 @@ const newRoom = (data, sendJson) => {
     const userId = uuidv4();
     room.users[userId] = {
       initNumber: userIndex,
-      initName: data["user-" + userIndex],
-      name: ""
+      initName: data["user-" + userIndex]
     };
     store.users[userId] = {
       key: uuidv4(),
@@ -44,6 +50,35 @@ const newRoom = (data, sendJson) => {
     userIndex++;
   }
   sendJson(response);
+};
+
+const getRoom = data => {
+  if (store.users[data.id].key !== data.key) {
+    return "";
+  }
+  return store.users[data.id].room;
+};
+
+const checkout = (data, sendJson) => {
+  const room = getRoom(data);
+  if (room == "") {
+    sendJson({ error: "access denied" });
+    return;
+  }
+  sendJson({
+    users: store.rooms[room].users,
+    state: store.rooms[room].state
+  });
+};
+
+const ready = (data, sendJson) => {
+  const room = getRoom(data);
+  if (room == "") {
+    sendJson({ error: "access denied" });
+    return;
+  }
+  store.rooms[room].users[data.id].ready = true;
+  notifyRoom(room);
 };
 
 module.exports = {
