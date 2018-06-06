@@ -9,7 +9,6 @@ const startWs = params => {
   webSocketServer.on("connection", client => {
     console.log("ws connection");
     client.on("message", message => onMessage(message, client));
-    client.send("hi client");
   });
   return webSocketServer;
 };
@@ -17,8 +16,6 @@ const startWs = params => {
 const onMessage = (message, client) => {
   message = JSON.parse(message);
   console.log("ws message: " + JSON.stringify(message));
-  console.log("id: " + message.id);
-  console.log("key: " + message.key);
   if (store.users[message.id] == null || store.users[message.id].key !== message.key) {
     console.log("Authentication failure! id: " + message.id + "key: " + message.key);
     return false;
@@ -27,7 +24,6 @@ const onMessage = (message, client) => {
   client.room = store.users[client.id].room;
   store.users[client.id].wsClient = client;
   store.rooms[client.room].users[client.id].connected = true;
-  //store.rooms[client.room].users[client.id].wsClient = client;
   notifyRoom(client.room);
 };
 
@@ -43,7 +39,6 @@ const notifyRoom = room => {
   };
   for (userId in store.rooms[room].users) {
     const user = store.users[userId];
-    //console.log(user);
     if (user.wsClient == null) {
       console.log("no wsClient");
       continue;

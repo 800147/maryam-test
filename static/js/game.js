@@ -7,14 +7,14 @@ document.addEventListener("flash-app-connected", () => {
   const ws = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
   ws.onopen = () => {
-    console.log("status: open");
+    console.log("WS status: open");
     ws.send(JSON.stringify({ id: params.id, key: params.key }));
   };
 
   ws.onclose = () => {
     document.getElementById("flashContent").style.display = "none";
     document.getElementById("disconnected").style.display = "block";
-    //alert("no connection");
+    console.log("WS status: closed");
   };
 
   ws.onmessage = message => {
@@ -22,7 +22,7 @@ document.addEventListener("flash-app-connected", () => {
   };
 
   ws.onerror = error => {
-    console.log("error: " + error.message);
+    console.log("WS error: " + error.message);
   };
 
 });

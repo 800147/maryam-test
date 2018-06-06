@@ -27,14 +27,18 @@ class ASBridge {
     }
     this._element = element;
     this._connected = true;
-    console.log("check OK (" + elementId + ")");
+    console.log(elementId + " connected");
     document.dispatchEvent(new Event("flash-app-connected"));
     return true;
   }
 
   call(param) {
+    if (this._connected == false) {
+      console.log("call: not connected yet");
+      return;
+    }
     if (this._element == undefined || this._element.wsCallback == undefined) {
-      console.log("call: _callback is undefined");
+      console.log("call: callback function is undefined");
       return;
     }
     console.log("call: " + param);
