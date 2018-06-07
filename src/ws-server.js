@@ -24,20 +24,20 @@ const onMessage = (message, client) => {
   client.room = store.users[client.id].room;
   store.users[client.id].wsClient = client;
   store.rooms[client.room].users[client.id].connected = true;
-  notifyRoom(client.room);
+  notifyRoom(store.rooms[client.room]);
 };
 
 const notifyRoom = room => {
-  console.log("notofy room: " + room);
-  if (store.rooms[room] == null) {
+  console.log("notofy room");
+  if (room == null) {
     console.log("room is undefined");
     return null;
   }
   const state = {
-    users: store.rooms[room].users,
-    state: store.rooms[room].state
+    users: room.users,
+    state: room.state
   };
-  for (userId in store.rooms[room].users) {
+  for (userId in room.users) {
     const user = store.users[userId];
     if (user.wsClient == null) {
       console.log("no wsClient");

@@ -23,7 +23,10 @@ const newRoom = (data, sendJson) => {
   const roomId = uuidv4();
   const room = {
     logs: [],
-    users: {}
+    users: {},
+    state: {
+      scene: 0
+    }
   };
   store.rooms[roomId] = room;
   let userIndex = 0;
@@ -54,30 +57,33 @@ const newRoom = (data, sendJson) => {
 
 const getRoom = data => {
   if (store.users[data.id].key !== data.key) {
-    return "";
+    return null;
   }
-  return store.users[data.id].room;
+  return store.rooms[store.users[data.id].room];
 };
 
 const checkout = (data, sendJson) => {
   const room = getRoom(data);
-  if (room == "") {
+  if (room == null) {
     sendJson({ error: "access denied" });
     return;
   }
   sendJson({
-    users: store.rooms[room].users,
-    state: store.rooms[room].state
+    users: room.users,
+    state: room.state
   });
 };
 
 const ready = (data, sendJson) => {
   const room = getRoom(data);
-  if (room == "") {
+  if (room == null) {
     sendJson({ error: "access denied" });
     return;
   }
-  store.rooms[room].users[data.id].ready = true;
+  room.users[data.id].ready = true;
+  if (Object.keys(room.users).every(userId => room.users[userId].ready)) {
+    room.state.scene = Math.max(room.state.scene, 1);
+  }
   notifyRoom(room);
 };
 
