@@ -1,4 +1,4 @@
-const { store } = require("./store");
+const { store, log } = require("./store");
 const { uuidv4 } = require("./lib/uuidv4.js");
 const { notifyRoom } = require("./ws-server");
 
@@ -52,6 +52,7 @@ const newRoom = (data, sendJson) => {
     
     userIndex++;
   }
+  log(room, "Комната создана");
   sendJson(response);
 };
 
@@ -81,8 +82,10 @@ const ready = (data, sendJson) => {
     return;
   }
   room.users[data.id].ready = true;
+  log(room, room.users[data.id].initName + " Готов!");
   if (Object.keys(room.users).every(userId => room.users[userId].ready)) {
     room.state.scene = Math.max(room.state.scene, 1);
+    log(room, "Переход к шагу 1");
   }
   notifyRoom(room);
 };
