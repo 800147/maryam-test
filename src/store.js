@@ -29,4 +29,14 @@ const store = {
   }
 };
 
-module.exports = { store };
+const log = (room, message) => {
+  room.logs.push({
+    users: Object.assign({}, room.users),
+    state: Object.assign({}, room.state),
+    message: message,
+    time: new Date()
+  });
+  console.log(room.logs);
+};
+
+module.exports = { store, log };
