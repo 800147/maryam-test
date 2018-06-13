@@ -15,14 +15,15 @@ ws.onclose = () => {
 };
 ws.onmessage = message => {
   const json = JSON.parse(message.data);
-  console.log(JSON.stringify(json, null, "  "));
   if (json.actions != null) {
     for (let i = 0; i < json.actions.length; i++) {
       body.appendChild(
         __("div", null, json.actions[i].time + " " + json.actions[i].message)
       );
+      console.log(json.actions[i].time + " " + json.actions[i].message);
     }
   }
+  console.log(json);
 };
 ws.onerror = error => {
   console.log("WS error: " + error.message);
