@@ -1,6 +1,6 @@
-const { store, log } = require("./store");
+const { store } = require("./store");
 const { uuidv4 } = require("./lib/uuidv4.js");
-const { notifyRoom, notifyRoomObservers } = require("./ws-server");
+const { logAndNotify } = require("./ws-server");
 
 const api = (path, data, sendJson) => {
   console.log("API \"" + path + "\" " + JSON.stringify(data));
@@ -58,7 +58,7 @@ const newRoom = (data, sendJson) => {
     
     userIndex++;
   }
-  log(room, "Комната создана");
+  logAndNotify(room, "Комната создана");
   sendJson(response);
 };
 
@@ -88,18 +88,11 @@ const ready = (data, sendJson) => {
     return;
   }
   room.users[data.id].ready = true;
-  log(room, room.users[data.id].initName + " Готов!");
+  logAndNotify(room, room.users[data.id].initName + " Готов!");
   if (Object.keys(room.users).every(userId => room.users[userId].ready)) {
     room.state.scene = Math.max(room.state.scene, 1);
-    log(room, "Переход к шагу 1");
+    logAndNotify(room, "Переход к шагу 1");
   }
-  notifyRoom(room);
-};
-
-const logAndNotify = (room, message) => {
-  const logRecord = log(room, message);
-  notifyRoom(room);
-  notifyRoomObservers(room, logRecord);
 };
 
 module.exports = {

@@ -4,7 +4,6 @@ const querystring = require('querystring');
 
 const { serveStatic } = require("./static-server");
 const { api } = require("./api");
-const { store } = require("./store");
 
 const startHttp = port => {
   server = http.createServer();
