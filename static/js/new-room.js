@@ -135,12 +135,36 @@ const __codeRow = user => {
     )
   );
 };
+const __observerCodeRow = (roomId, observerKey) => {
+  const link = window.location.href.substring(0,
+    window.location.href.length - "new-room.html".length
+  ) + "observer.html?room=" + roomId + "&key=" + observerKey
+  let label;
+  return __row({},
+    used(__label({ textAlign: "left" }, "Наблюдатель"),
+      el => el.classList.add("flex-grow_1")
+    ),
+    used(__label({ textAlign: "left" }, link),
+      el => el.classList.add("visually-hidden"),
+      el => label = el
+    ),
+    used(__button({}, "копировать ссылку"),
+      el => el.addEventListener("click", e => copyToClipboard(label))
+    ),
+    used(__button({}, "отправить по email"),
+      el => el.addEventListener("click", e =>
+        window.open("mailto:?subject=Ссылка на тестирование&body=" + encodeURIComponent(link))
+      )
+    )
+  );
+};
 
 const showCodes = json => {
   document.documentElement.replaceChild(
     __("body", {},
       used(__("div"),
-        el => json.forEach(user => el.appendChild(__codeRow(user)))
+        el => json.users.forEach(user => el.appendChild(__codeRow(user))),
+        el => el.appendChild(__observerCodeRow(json.roomId, json.observerKey))
       )
     ), 
     document.body

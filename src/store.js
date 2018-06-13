@@ -1,6 +1,6 @@
 const store = {
   rooms: {
-    "35725e6a-704f-4aed-bbc4-425ab305f50d": {
+    "room0": {
       logs: [],
       users: {
         user0: {
@@ -12,6 +12,7 @@ const store = {
           initName: "Боб"
         }
       },
+      observerKey: "observerKey0",
       observers: [],
       state: {
         scene: 0
@@ -21,23 +22,25 @@ const store = {
   users: {
     user0: {
       key: "key0",
-      room: "35725e6a-704f-4aed-bbc4-425ab305f50d"
+      room: "room0"
     },
     user1: {
       key: "key1",
-      room: "35725e6a-704f-4aed-bbc4-425ab305f50d"
+      room: "room0"
     }
   }
 };
 
 const log = (room, message) => {
-  room.logs.push({
+  const record = {
     users: Object.assign({}, room.users),
     state: Object.assign({}, room.state),
     message: message,
     time: new Date()
-  });
+  };
+  room.logs.push(record);
   console.log(room.logs);
+  return record;
 };
 
 module.exports = { store, log };

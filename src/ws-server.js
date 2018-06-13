@@ -18,28 +18,58 @@ const onConnect = client => {
 };
 
 const onClose = client => {
-  if (client.id == null) {
-    return;
+  if (client.id != null) {
+    store.users[client.id].wsClient = null;
+    store.rooms[client.room].users[client.id].connected = false;
+    log(store.rooms[client.room], store.rooms[client.room].users[client.id].initName + " отключен");
+    notifyRoom(store.rooms[client.room]);
   }
-  store.users[client.id].wsClient = null;
-  store.rooms[client.room].users[client.id].connected = false;
-  log(store.rooms[client.room], store.rooms[client.room].users[client.id].initName + " отключен");
-  notifyRoom(store.rooms[client.room]);
+  if (client.room != null) {
+    for (let i = 0; i < store.rooms[client.room].observers.length; i++) {
+      if (store.rooms[client.room].observers[i] === client) {
+        store.rooms[client.room].observers.splice(i);
+        return;
+      }
+    }
+  }
 };
 
 const onMessage = (message, client) => {
   message = JSON.parse(message);
   console.log("ws message: " + JSON.stringify(message));
-  if (store.users[message.id] == null || store.users[message.id].key !== message.key) {
-    console.log("Authentication failure! id: " + message.id + " key: " + message.key);
-    return false;
+  if (message.id != null) {
+    if (store.users[message.id] == null || store.users[message.id].key !== message.key) {
+      console.log("Authentication failure! id: " + message.id + " key: " + message.key);
+      return false;
+    }
+    client.id = message.id;
+    client.room = store.users[client.id].room;
+    store.users[client.id].wsClient = client;
+    store.rooms[client.room].users[client.id].connected = true;
+    log(store.rooms[client.room], store.rooms[client.room].users[client.id].initName + " подключен");
+    notifyRoom(store.rooms[client.room]);
   }
-  client.id = message.id;
-  client.room = store.users[client.id].room;
-  store.users[client.id].wsClient = client;
-  store.rooms[client.room].users[client.id].connected = true;
-  log(store.rooms[client.room], store.rooms[client.room].users[client.id].initName + " подключен");
-  notifyRoom(store.rooms[client.room]);
+  if (message.room != null) {
+    if (store.rooms[message.room] == null || store.rooms[message.room].observerKey !== message.key) {
+      console.log("Authentication failure! room: " + message.room + " observerKey: " + message.key);
+      return false;
+    }
+    store.rooms[client.room].observers.push(client);
+    const logs = {
+      actions: [],
+      store: {
+        users: store.rooms[client.room].users,
+        state: store.rooms[client.room].state
+      }
+    };
+    for (let i = 0; i < store.rooms[client.room].logs.length; i++) {
+      logs.actions.push({
+        message: store.rooms[client.room].logs[i].message,
+        time: store.rooms[client.room].logs[i].time
+      });
+    }
+    client.send(JSON.stringify(logs));
+  }
 };
 
 const notifyRoom = room => {
@@ -48,7 +78,7 @@ const notifyRoom = room => {
     console.log("room is undefined");
     return null;
   }
-  const state = {
+  const message = {
     users: room.users,
     state: room.state
   };
@@ -62,11 +92,23 @@ const notifyRoom = room => {
       console.log("user not ready");
       continue;
     }
-    user.wsClient.send(JSON.stringify(state));
+    user.wsClient.send(JSON.stringify(message));
+  }
+};
+
+const notifyRoomObservers = (room, logRecord) => {
+  console.log("notofy room for observers");
+  if (room == null) {
+    console.log("room is undefined");
+    return null;
+  }
+  for (let i = 0; i < room.observers.length; i++) {
+    room.observers[i].send(JSON.stringify(logRecord));
   }
 };
 
 module.exports = {
   startWs,
-  notifyRoom
+  notifyRoom,
+  notifyRoomObservers
 };

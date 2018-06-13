@@ -1,6 +1,6 @@
 const { store, log } = require("./store");
 const { uuidv4 } = require("./lib/uuidv4.js");
-const { notifyRoom } = require("./ws-server");
+const { notifyRoom, notifyRoomObservers } = require("./ws-server");
 
 const api = (path, data, sendJson) => {
   console.log("API \"" + path + "\" " + JSON.stringify(data));
@@ -24,6 +24,8 @@ const newRoom = (data, sendJson) => {
   const room = {
     logs: [],
     users: {},
+    observerKey: uuidv4(),
+    observers: [],
     state: {
       scene: 0
     }
@@ -31,7 +33,11 @@ const newRoom = (data, sendJson) => {
   store.rooms[roomId] = room;
   let userIndex = 0;
 
-  const response = [];
+  const response = {
+    roomId: roomId,
+    observerKey: room.observerKey,
+    users: []
+  };
 
   while (data["user-" + userIndex] != null) {
     const userId = uuidv4();
@@ -43,7 +49,7 @@ const newRoom = (data, sendJson) => {
       key: uuidv4(),
       room: roomId
     };
-    response.push({
+    response.users.push({
       initNumber: userIndex,
       initName: room.users[userId].initName,
       id: userId,
@@ -90,6 +96,13 @@ const ready = (data, sendJson) => {
   notifyRoom(room);
 };
 
+const logAndNotify = (room, message) => {
+  const logRecord = log(room, message);
+  notifyRoom(room);
+  notifyRoomObservers(room, logRecord);
+};
+
 module.exports = {
-  api
+  api,
+  logAndNotify
 };
