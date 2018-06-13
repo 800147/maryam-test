@@ -13,7 +13,6 @@ const startHttp = port => {
 };
 
 const onRequest = (request, response) => {
-  console.log(request.method + " " + request.url);
   const pathName = new URL("http://" + request.headers.host + request.url).pathname;
   if (request.url.startsWith("/api/")) {
     if (request.method == 'POST') {
@@ -21,6 +20,7 @@ const onRequest = (request, response) => {
       request.on('data', data => body += data);
       request.on('end', () => {
         const postObj = querystring.parse(body);
+        console.log("\r\n" + new Date().toLocaleString() + " " + request.method + " " + request.url + ": " + JSON.stringify(postObj));
         api(request.url.substring("/api/".length), postObj, json => sendJson(response, json));
       });
     } else {
@@ -28,7 +28,7 @@ const onRequest = (request, response) => {
     }
   } else {
     const filePath = "./static" + (pathName != "/"? pathName: "/index.html");
-    console.log(filePath);
+    //console.log(filePath);
     serveStatic(response, filePath);
   }
 };

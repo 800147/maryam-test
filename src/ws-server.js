@@ -11,7 +11,7 @@ const startWs = params => {
 };
 
 const onConnect = client => {
-  console.log("ws connection");
+  //console.log("ws connection");
   client.on("close", () => onClose(client));
   client.on("message", message => onMessage(message, client));
 };
@@ -34,7 +34,7 @@ const onClose = client => {
 
 const onMessage = (message, client) => {
   message = JSON.parse(message);
-  console.log("ws message: " + JSON.stringify(message));
+  console.log("\r\n" + new Date().toLocaleString() + " WS: " + JSON.stringify(message));
   if (message.id != null) {
     if (store.users[message.id] == null || store.users[message.id].key !== message.key) {
       console.log("Authentication failure! id: " + message.id + " key: " + message.key);
@@ -74,7 +74,7 @@ const onMessage = (message, client) => {
 };
 
 const notifyRoom = room => {
-  console.log("notify room");
+  //console.log("notify room");
   if (room == null) {
     console.log("room is undefined");
     return null;
@@ -86,7 +86,7 @@ const notifyRoom = room => {
   for (userId in room.users) {
     const user = store.users[userId];
     if (user.wsClient == null) {
-      console.log("no wsClient");
+      //console.log("no wsClient");
       continue;
     }
     if (user.wsClient.readyState !== WebSocket.OPEN) {
@@ -98,7 +98,7 @@ const notifyRoom = room => {
 };
 
 const notifyRoomObservers = (room, logRecord) => {
-  console.log("notofy room for observers");
+  //console.log("notofy room for observers");
   if (room == null) {
     console.log("room is undefined");
     return null;

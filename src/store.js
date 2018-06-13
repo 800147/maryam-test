@@ -39,7 +39,6 @@ const log = (room, message) => {
     time: new Date()
   };
   room.logs.push(record);
-  console.log(room.logs);
   return record;
 };
 

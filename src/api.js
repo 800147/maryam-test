@@ -3,7 +3,7 @@ const { uuidv4 } = require("./lib/uuidv4.js");
 const { logAndNotify } = require("./ws-server");
 
 const api = (path, data, sendJson) => {
-  console.log("API \"" + path + "\" " + JSON.stringify(data));
+  //console.log("API \"" + path + "\" " + JSON.stringify(data));
   switch (path) {
     case "newRoom":
       newRoom(data, sendJson);
