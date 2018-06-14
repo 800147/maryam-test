@@ -4,6 +4,7 @@ body {
 }
 .actions {
   padding: 10px;
+  margin-left: 500px;
 }
 .store {
   display: block;
@@ -11,16 +12,26 @@ body {
   padding: 10px;
   background-color: #DDDDDD;
   position: fixed;
-  width: 50%;
-  max-width: 500px;
+  width: 500px;
   height: 100%;
-  right: 0;
+  left: 0;
   top: 0;
   bottom: 0;
   margin: 0;
   overflow: auto;
 }
+@media(max-width: 1000px) {
+  .actions {
+    margin-left: 50%;
+  }
+  .store {
+    width: 50%;
+  }
+}
 @media(max-width: 600px) {
+  .actions {
+    margin-left: 0;
+  }
   .store {
     position: relative;
     width: 100%;
