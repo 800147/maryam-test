@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  height: 100%;
+}
+.actions {
+  padding: 10px;
+}
+.store {
+  display: block;
+  box-sizing: border-box;
+  padding: 10px;
+  background-color: #DDDDDD;
+  position: fixed;
+  width: 50%;
+  max-width: 500px;
+  height: 100%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: 0;
+  overflow: auto;
+}
+@media(max-width: 600px) {
+  .store {
+    position: relative;
+    width: 100%;
+    max-width: initial;
+    height: 80vh;
+  }
+}

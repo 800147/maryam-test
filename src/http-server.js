@@ -16,16 +16,17 @@ const onRequest = (request, response) => {
   const pathName = new URL("http://" + request.headers.host + request.url).pathname;
   if (request.url.startsWith("/api/")) {
     if (request.method == 'POST') {
-      if (request.client._writableState.sync == true) {
-        console.log("\r\nsync");
-        return;
-      }
-      //console.log(request);
+      // if (request.client._writableState.sync == true) {
+      //   console.log("\r\nsync");
+      //   return;
+      // }
       let body = '';
       request.on('data', data => body += data);
       request.on('end', () => {
         const postObj = querystring.parse(body);
         console.log("\r\n" + new Date().toLocaleString() + " " + request.method + " " + request.url + ": " + JSON.stringify(postObj));
+        console.log(request.operated);
+        request.operated = true;
         api(request.url.substring("/api/".length), postObj, json => sendJson(response, json));
       });
     } else {
