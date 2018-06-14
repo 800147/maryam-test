@@ -93,6 +93,7 @@ const ready = (data, sendJson) => {
     room.state.scene = Math.max(room.state.scene, 1);
     logAndNotify(room, "Переход к шагу 1");
   }
+  sendJson({});
 };
 
 module.exports = {
