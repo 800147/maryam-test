@@ -18,10 +18,16 @@ ws.onopen = () => {
 
 ws.onclose = () => {
   console.log("WS status: closed");
+  actions.appendChild(
+    __("div", null,
+      "Соединение разорвано. ",
+      __("a", { href: "" }, "ПЕРЕЗАГРУЗИТЬ")
+    )
+  );
 };
 
 ws.onmessage = message => {
-  const scrolledToBottom = (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight;
+  const bottom = document.body.offsetHeight - window.innerHeight - window.pageYOffset;
   const json = JSON.parse(message.data);
   const newStore = __("plaintext", { class: "store" },
     JSON.stringify(json.store, null, "  ")
@@ -35,7 +41,7 @@ ws.onmessage = message => {
     console.log(json.actions[i].time + " " + json.actions[i].message);
   }
   console.log(json);
-  if (scrolledToBottom) {
+  if (bottom < 1) {
     window.scrollTo(window.scrollX, document.body.scrollHeight);
   }
 };
