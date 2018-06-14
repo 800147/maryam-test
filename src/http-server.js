@@ -16,6 +16,11 @@ const onRequest = (request, response) => {
   const pathName = new URL("http://" + request.headers.host + request.url).pathname;
   if (request.url.startsWith("/api/")) {
     if (request.method == 'POST') {
+      if (request.client._writableState.sync == true) {
+        console.log("\r\nsync");
+        return;
+      }
+      //console.log(request);
       let body = '';
       request.on('data', data => body += data);
       request.on('end', () => {
