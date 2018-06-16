@@ -14,6 +14,9 @@ const api = (path, data, sendJson) => {
     case "ready":
       ready(data, sendJson);
       break;
+    case "chooseFigure":
+      chooseFigure(data, sendJson);
+      break;
     default:
       sendJson({ error: 404 });
   }
@@ -43,7 +46,8 @@ const newRoom = (data, sendJson) => {
     const userId = uuidv4();
     room.users[userId] = {
       initNumber: userIndex,
-      initName: data["user-" + userIndex]
+      initName: data["user-" + userIndex],
+      id: userId
     };
     store.users[userId] = {
       key: uuidv4(),
@@ -87,12 +91,35 @@ const ready = (data, sendJson) => {
     sendJson({ error: "access denied" });
     return;
   }
+  if (room.users[data.id].ready != null) {
+    sendJson({ error: "ready already" });
+    return;
+  }
   room.users[data.id].ready = true;
-  logAndNotify(room, room.users[data.id].initName + " Готов!");
+  logAndNotify(room, room.users[data.id].initName + " готов!");
   if (Object.keys(room.users).every(userId => room.users[userId].ready)) {
-    room.state.scene = Math.max(room.state.scene, 1);
+    room.state.scene = 1;
+    room.state.step = 0;
     logAndNotify(room, "Переход к шагу 1");
   }
+  sendJson({});
+};
+
+const chooseFigure = (data, sendJson) => {
+  const room = getRoom(data);
+  if (room == null) {
+    sendJson({ error: "access denied" });
+    return;
+  }
+  room.users[data.id].figure = { type: data.type, circle: data.circle };
+  logAndNotify(room, room.users[data.id].initName + " выбрал фигуру " + data.type + data.circle);
+  /*
+  if (Object.keys(room.users).every(userId => room.users[userId].figure != null)) {
+    room.state.scene = Math.max(room.state.scene, 1);
+    room.state.step = 1;
+    logAndNotify(room, "Все выбрали фигуры");
+  }
+  */
   sendJson({});
 };
 

@@ -20,7 +20,9 @@ const onRequest = (request, response) => {
       request.on('data', data => body += data);
       request.on('end', () => {
         const postObj = querystring.parse(body);
-        console.log("\r\n" + new Date().toLocaleString() + " " + request.method + " " + request.url + ": " + JSON.stringify(postObj));
+        if (request.url != "/api/checkout") {
+          console.log("\r\n" + new Date().toLocaleString() + " " + request.method + " " + request.url + ": " + JSON.stringify(postObj));
+        }
         api(request.url.substring("/api/".length), postObj, json => sendJson(response, json));
         //sendJson(response, {});
       });

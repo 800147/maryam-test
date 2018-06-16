@@ -3,13 +3,15 @@ const store = {
     "room0": {
       logs: [],
       users: {
-        user0: {
+        "user0": {
           initNumber: 0,
-          initName: "Алиса"
+          initName: "Алиса",
+          id: "user0"
         },
-        user1: {
+        "user1": {
           initNumber: 1,
-          initName: "Боб"
+          initName: "Боб",
+          id: "user1"
         }
       },
       observerKey: "observerKey0",
@@ -20,11 +22,11 @@ const store = {
     }
   },
   users: {
-    user0: {
+    "user0": {
       key: "key0",
       room: "room0"
     },
-    user1: {
+    "user1": {
       key: "key1",
       room: "room0"
     }
