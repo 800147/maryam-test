@@ -113,13 +113,11 @@ const chooseFigure = (data, sendJson) => {
   }
   room.users[data.id].figure = { type: data.type, circle: data.circle };
   logAndNotify(room, room.users[data.id].initName + " выбрал фигуру " + data.type + data.circle);
-  /*
   if (Object.keys(room.users).every(userId => room.users[userId].figure != null)) {
     room.state.scene = Math.max(room.state.scene, 1);
     room.state.step = 1;
     logAndNotify(room, "Все выбрали фигуры");
   }
-  */
   sendJson({});
 };
 
