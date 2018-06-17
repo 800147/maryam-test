@@ -14,8 +14,14 @@ const api = (path, data, sendJson) => {
     case "ready":
       ready(data, sendJson);
       break;
-    case "chooseFigure":
+      case "chooseFigure":
       chooseFigure(data, sendJson);
+      break;
+    case "color":
+      color(data, sendJson);
+      break;
+    case "colorComplete":
+      colorComplete(data, sendJson);
       break;
     default:
       sendJson({ error: 404 });
@@ -111,12 +117,57 @@ const chooseFigure = (data, sendJson) => {
     sendJson({ error: "access denied" });
     return;
   }
-  room.users[data.id].figure = { type: data.type, circle: data.circle };
+  room.users[data.id].figure = { type: data.type, circle: data.circle, colors: {}, userToColor: data.id };
   logAndNotify(room, room.users[data.id].initName + " выбрал фигуру " + data.type + data.circle);
   if (Object.keys(room.users).every(userId => room.users[userId].figure != null)) {
     room.state.scene = Math.max(room.state.scene, 1);
     room.state.step = 1;
     logAndNotify(room, "Все выбрали фигуры");
+  }
+  sendJson({});
+};
+
+const color = (data, sendJson) => {
+  const room = getRoom(data);
+  if (room == null) {
+    sendJson({ error: "access denied" });
+    return;
+  }
+  room.users[data.id].figure.colors[data.user] = data.color;
+  logAndNotify(room, room.users[data.id].initName + " разукрасил " + room.users[data.user].initName + " в " + ["красный", "жёлтый", "зелёный", "фиолетовый", "синий", "коричневый", "серый", "чёрный"][data.color]);
+  sendJson({});
+};
+const colorComplete = (data, sendJson) => {
+  const room = getRoom(data);
+  if (room == null) {
+    sendJson({ error: "access denied" });
+    return;
+  }
+  if (room.users[data.id].figure.userToColor == null) {
+    sendJson({ error: "already complete" });
+    return;
+  }
+  const previousUserToColor = room.users[data.id].figure.userToColor;
+  if (room.users[data.id].figure.colors[previousUserToColor] == null) {
+    sendJson({ error: "no color" });
+    return;
+  }
+  let newUserToColor = null;
+  for (userId in room.users) {
+    if (room.users[data.id].figure.colors[userId] == null) {
+      newUserToColor = userId;
+      break;
+    }
+  }
+  room.users[data.id].figure.userToColor = newUserToColor;
+  logAndNotify(room, room.users[data.id].initName + " подтвердил " +
+    ["красный", "жёлтый", "зелёный", "фиолетовый", "синий", "коричневый", "серый", "чёрный"][room.users[data.id].figure.colors[previousUserToColor]] + 
+    " цвет для " + room.users[previousUserToColor].initName
+  );
+  if (Object.keys(room.users).every(userId => room.users[userId].figure.userToColor == null)) {
+    room.state.scene = 2;
+    room.state.step = 0;
+    logAndNotify(room, "Все друг друга разукрасили");
   }
   sendJson({});
 };

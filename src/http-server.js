@@ -38,7 +38,9 @@ const onRequest = (request, response) => {
 
 const sendJson = (response, obj) => {
   response.writeHead(200, { "Content-Type": "text/json" });
-  //console.log(JSON.stringify(obj));
+  if (obj.error != null) {
+    console.log(JSON.stringify(obj));
+  }
   response.end(JSON.stringify(obj));
 };
 
